@@ -502,6 +502,8 @@ section { padding: 100px 0; }
     font-weight: 700;
     line-height: 1;
     margin-bottom: 8px;
+    direction: ltr; /* force LTR: "70 ₪" not "₪ 70" */
+    unicode-bidi: isolate;
 }
 .price span { font-size: 1.5rem; }
 .duration {
@@ -648,7 +650,12 @@ section { padding: 100px 0; }
     font-size: 1.05rem;
 }
 .hours-table td:first-child { text-align: right; }
-.hours-table td:last-child { text-align: left; color: var(--text-muted); font-family: var(--font-elegant); }
+.hours-table td:last-child {
+    text-align: left;
+    color: var(--text-muted);
+    font-family: var(--font-elegant);
+    direction: ltr; /* force LTR so "09:00 – 20:00" doesn't flip in RTL page */
+}
 .hours-table tr.today td:last-child { color: var(--gold); }
 
 /* ========== FOOTER ========== */
@@ -986,4 +993,105 @@ body.modal-open { overflow: hidden; }
 @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(40px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Section title underline grows on reveal ---- */
+.reveal .section-title::after { width: 0; transition: width 0.8s ease 0.6s; }
+.reveal.visible .section-title::after { width: 60px; }
+
+/* ---- Hero children stagger (parent animation removed, children animated) ---- */
+.hero-content { animation: none; }
+.hero-pretitle { animation: fadeInUp 0.7s ease both 0s; }
+.hero-title    { animation: fadeInUp 0.7s ease both 0.18s; }
+.hero-subtitle { animation: fadeInUp 0.7s ease both 0.36s; }
+.hero-content > .btn { animation: fadeInUp 0.7s ease both 0.54s; }
+
+/* ---- Price cards bounce-in stagger when section reveals ---- */
+@keyframes cardPop {
+    0%   { transform: scale(0.88) translateY(20px); }
+    65%  { transform: scale(1.03) translateY(-4px); }
+    100% { transform: scale(1)    translateY(0); }
+}
+@keyframes cardPopFeatured {
+    0%   { transform: scale(0.92) translateY(20px); }
+    65%  { transform: scale(1.08) translateY(-4px); }
+    100% { transform: scale(1.05) translateY(0); }
+}
+.pricing.visible .price-card { animation: cardPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.pricing.visible .price-card.featured { animation: cardPopFeatured 0.55s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.pricing.visible .price-card:nth-child(1) { animation-delay: 0.1s; }
+.pricing.visible .price-card:nth-child(2) { animation-delay: 0.25s; }
+.pricing.visible .price-card:nth-child(3) { animation-delay: 0.4s; }
+
+/* ---- Featured card continuous glow pulse ---- */
+@keyframes featuredGlow {
+    0%, 100% { box-shadow: 0 0 20px rgba(201,169,97,0.25), 0 20px 50px rgba(0,0,0,0.4); }
+    50%       { box-shadow: 0 0 45px rgba(232,201,135,0.55), 0 20px 50px rgba(0,0,0,0.4); }
+}
+.price-card.featured { animation: featuredGlow 3s ease-in-out infinite; }
+.pricing.visible .price-card.featured { animation: cardPopFeatured 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) 0.25s, featuredGlow 3s ease-in-out 1s infinite; }
+
+/* ---- Badges stagger in about ---- */
+@keyframes badgePop {
+    0%   { opacity: 0; transform: scale(0.8) translateY(16px); }
+    70%  { opacity: 1; transform: scale(1.06) translateY(-3px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+.about.visible .badge { animation: badgePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.about.visible .badge:nth-child(1) { animation-delay: 0.4s; }
+.about.visible .badge:nth-child(2) { animation-delay: 0.55s; }
+.about.visible .badge:nth-child(3) { animation-delay: 0.7s; }
+
+/* ---- Contact icons stagger ---- */
+.contact-icons.visible .contact-icon {
+    animation: badgePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.contact-icons.visible .contact-icon:nth-child(1) { animation-delay: 0.1s; }
+.contact-icons.visible .contact-icon:nth-child(2) { animation-delay: 0.22s; }
+.contact-icons.visible .contact-icon:nth-child(3) { animation-delay: 0.34s; }
+.contact-icons.visible .contact-icon:nth-child(4) { animation-delay: 0.46s; }
+
+/* ---- Hours rows stagger ---- */
+@keyframes rowSlide {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+.hours.visible .hours-table tr { animation: rowSlide 0.4s ease both; }
+.hours.visible .hours-table tr:nth-child(1) { animation-delay: 0.1s; }
+.hours.visible .hours-table tr:nth-child(2) { animation-delay: 0.17s; }
+.hours.visible .hours-table tr:nth-child(3) { animation-delay: 0.24s; }
+.hours.visible .hours-table tr:nth-child(4) { animation-delay: 0.31s; }
+.hours.visible .hours-table tr:nth-child(5) { animation-delay: 0.38s; }
+.hours.visible .hours-table tr:nth-child(6) { animation-delay: 0.45s; }
+.hours.visible .hours-table tr:nth-child(7) { animation-delay: 0.52s; }
+
+/* ---- Button ripple ---- */
+.btn { overflow: hidden; }
+.btn-ripple {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    margin-top: -50px;
+    margin-left: -50px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.28);
+    animation: rippleEffect 0.6s linear forwards;
+    pointer-events: none;
+}
+@keyframes rippleEffect {
+    from { transform: scale(0); opacity: 1; }
+    to   { transform: scale(4); opacity: 0; }
+}
+
+/* ---- Scroll progress bar ---- */
+.scroll-progress {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(to right, var(--gold-dark), var(--gold-bright));
+    transform-origin: left;
+    transform: scaleX(0);
+    z-index: 1001;
+    transition: transform 0.08s linear;
+    pointer-events: none;
 }

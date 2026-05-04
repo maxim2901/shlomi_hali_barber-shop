@@ -15,11 +15,15 @@ const HOURS = {
 };
 const SLOT_MINUTES = 30;
 
-// ========== NAVBAR SCROLL ==========
+// ========== NAVBAR SCROLL + PROGRESS BAR ==========
 const navbar = document.getElementById('navbar');
+const scrollProgress = document.getElementById('scrollProgress');
 window.addEventListener('scroll', () => {
     if (window.scrollY > 60) navbar.classList.add('scrolled');
     else navbar.classList.remove('scrolled');
+
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    scrollProgress.style.transform = `scaleX(${max > 0 ? window.scrollY / max : 0})`;
 });
 
 // ========== HAMBURGER MENU ==========
@@ -99,9 +103,12 @@ const lightbox = document.getElementById('lightbox');
 const lightboxImg = document.getElementById('lightboxImg');
 const lightboxClose = document.getElementById('lightboxClose');
 
-document.querySelectorAll('.gallery-item img').forEach(img => {
-    img.addEventListener('click', () => {
-        lightboxImg.src = img.src.replace('w=600', 'w=1400');
+// Listen on the whole gallery-item, not the img — the overlay div sits on top
+// of the img and would swallow the click event.
+document.querySelectorAll('.gallery-item').forEach(item => {
+    item.addEventListener('click', () => {
+        const img = item.querySelector('img');
+        lightboxImg.src = img.src;
         lightboxImg.alt = img.alt;
         lightbox.classList.add('active');
         document.body.classList.add('modal-open');
@@ -416,4 +423,17 @@ bookingForm.addEventListener('submit', async (e) => {
 document.querySelectorAll('#bookingForm input, #bookingForm select').forEach(el => {
     el.addEventListener('input', () => el.classList.remove('error'));
     el.addEventListener('change', () => el.classList.remove('error'));
+});
+
+// ========== BUTTON RIPPLE ==========
+document.querySelectorAll('.btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        const rect = btn.getBoundingClientRect();
+        const ripple = document.createElement('span');
+        ripple.className = 'btn-ripple';
+        ripple.style.left = `${e.clientX - rect.left - 50}px`;
+        ripple.style.top  = `${e.clientY - rect.top  - 50}px`;
+        btn.appendChild(ripple);
+        ripple.addEventListener('animationend', () => ripple.remove());
+    });
 });
