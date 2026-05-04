@@ -276,6 +276,33 @@ dateInput.addEventListener('change', () => {
     timeSelect.innerHTML = '<option value="">בחר שעה...</option>' +
         slots.map(s => `<option value="${s}">${s}</option>`).join('');
     dateHint.textContent = `יום ${DAY_NAMES[dow]} – שעות פעילות ${String(openH).padStart(2,'0')}:00 – ${String(closeH).padStart(2,'0')}:00`;
+
+    // Tell the Firebase module to fetch already-booked slots for this date.
+    selectedDateForSlots = value;
+    window.dispatchEvent(new CustomEvent('booking:date-selected', { detail: { date: value } }));
+});
+
+// Track the date we're currently expecting slot-fetch results for, so a slow
+// response for a previous date doesn't mutate a newer dropdown.
+let selectedDateForSlots = null;
+
+window.addEventListener('booking:slots-loaded', (e) => {
+    const { date, takenTimes } = e.detail || {};
+    if (date !== selectedDateForSlots) return;
+    if (!Array.isArray(takenTimes) || takenTimes.length === 0) return;
+    const taken = new Set(takenTimes);
+    Array.from(timeSelect.options).forEach(opt => {
+        if (opt.value && taken.has(opt.value)) opt.remove();
+    });
+    if (taken.has(timeSelect.value)) timeSelect.value = '';
+    // Count real slot options (skip the placeholder with empty value).
+    const remaining = Array.from(timeSelect.options).filter(o => o.value).length;
+    if (remaining === 0) {
+        timeSelect.disabled = true;
+        timeSelect.innerHTML = '<option value="">כל השעות לתאריך זה תפוסות</option>';
+        dateHint.textContent = 'כל השעות בתאריך זה כבר תפוסות. נסה תאריך אחר.';
+        dateHint.classList.add('error');
+    }
 });
 
 // Service price lookup (used when persisting booking)
@@ -319,12 +346,39 @@ bookingForm.addEventListener('submit', async (e) => {
     const dow = new Date(+y, +m - 1, +d).getDay();
 
     // Notify Firebase module (defined in index.html). No-op if running from file://
+    // When Firebase is ready we wait for booking:result so we can detect a slot
+    // collision (someone else just booked the same time) and abort before WhatsApp opens.
+    const firebaseReady = !!window.__FIREBASE_READY;
+    let resultPromise = Promise.resolve({ ok: true, skipped: true });
+    if (firebaseReady) {
+        resultPromise = new Promise((resolve) => {
+            const handler = (ev) => resolve(ev.detail || { ok: false, reason: 'no-detail' });
+            window.addEventListener('booking:result', handler, { once: true });
+            // Network-failure safety net: don't block the user forever.
+            setTimeout(() => {
+                window.removeEventListener('booking:result', handler);
+                resolve({ ok: true, timedOut: true });
+            }, 8000);
+        });
+    }
+
     window.dispatchEvent(new CustomEvent('booking:submit', {
         detail: {
             firstName, lastName, phone, service, date, time, notes,
             price: SERVICE_PRICE[service] ?? null,
         }
     }));
+
+    const result = await resultPromise;
+    if (!result.ok && result.reason === 'slot-taken') {
+        timeSelect.classList.add('error');
+        dateHint.textContent = 'השעה הזו כבר נתפסה. אנא בחר שעה אחרת.';
+        dateHint.classList.add('error');
+        // Refresh the dropdown so the just-taken slot disappears.
+        dateInput.dispatchEvent(new Event('change'));
+        timeSelect.focus();
+        return;
+    }
 
     // Build WhatsApp message
     const lines = [

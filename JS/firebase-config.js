@@ -26,3 +26,6 @@ export const db = getFirestore(app);
 export const auth = getAuth(app);
 
 export const FIREBASE_READY = firebaseConfig.apiKey !== "REPLACE_ME";
+
+// חשיפה ל-window כדי ש-JS/index.js (סקריפט קלאסי, לא module) יוכל לבדוק זמינות.
+window.__FIREBASE_READY = FIREBASE_READY;

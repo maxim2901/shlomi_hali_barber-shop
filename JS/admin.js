@@ -293,8 +293,22 @@ payStatus.addEventListener('change', () => {
     }
 });
 
+// Releasing the slot lock when a booking is removed/cancelled — see firestore.rules
+// `slots/{slotId}` collection. Best-effort: tolerate missing slots silently.
+async function releaseSlot(booking) {
+    if (!booking?.date || !booking?.time) return;
+    try {
+        await deleteDoc(doc(db, 'slots', `${booking.date}_${booking.time}`));
+    } catch (err) {
+        console.warn('Slot release failed (already gone?):', err.message);
+    }
+}
+
 saveBtn.addEventListener('click', async () => {
     if (!currentBookingId) return;
+    const booking = allBookings.find(x => x.id === currentBookingId);
+    const wasCancelled = booking?.status === 'cancelled';
+    const nowCancelled = bkStatusEl.value === 'cancelled';
     const updates = {
         status: bkStatusEl.value,
         payment: {
@@ -306,6 +320,9 @@ saveBtn.addEventListener('click', async () => {
     };
     try {
         await updateDoc(doc(db, 'bookings', currentBookingId), updates);
+        if (nowCancelled && !wasCancelled) {
+            await releaseSlot(booking);
+        }
         showToast('נשמר בהצלחה');
         closeDrawer();
     } catch (err) {
@@ -317,8 +334,10 @@ saveBtn.addEventListener('click', async () => {
 deleteBtn.addEventListener('click', async () => {
     if (!currentBookingId) return;
     if (!confirm('למחוק את התור הזה? פעולה לא הפיכה.')) return;
+    const booking = allBookings.find(x => x.id === currentBookingId);
     try {
         await deleteDoc(doc(db, 'bookings', currentBookingId));
+        await releaseSlot(booking);
         showToast('התור נמחק');
         closeDrawer();
     } catch (err) {

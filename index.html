@@ -383,23 +383,61 @@
     <script type="module">
         try {
             const { db, FIREBASE_READY } = await import('./JS/firebase-config.js');
-            const { collection, addDoc, serverTimestamp } =
-                await import('https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js');
+            const {
+                collection, addDoc, setDoc, doc, query, where, getDocs,
+                serverTimestamp,
+            } = await import('https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js');
+
+            // טעינת המשבצות התפוסות בתאריך נבחר → דיווח חזרה לטופס.
+            window.addEventListener('booking:date-selected', async (e) => {
+                if (!FIREBASE_READY) return;
+                const date = e.detail?.date;
+                if (!date) return;
+                try {
+                    const snap = await getDocs(query(collection(db, 'slots'), where('date', '==', date)));
+                    const takenTimes = snap.docs.map(d => d.data().time);
+                    window.dispatchEvent(new CustomEvent('booking:slots-loaded', {
+                        detail: { date, takenTimes }
+                    }));
+                } catch (err) {
+                    console.error('Slot fetch failed:', err);
+                }
+            });
 
             window.addEventListener('booking:submit', async (e) => {
                 if (!FIREBASE_READY) {
                     console.warn('Firebase not configured — booking saved only via WhatsApp.');
                     return;
                 }
+                const data = e.detail;
+                const slotId = `${data.date}_${data.time}`;
+                try {
+                    // נעילת המשבצת קודם — אם הדוק קיים, ה-create הופך ל-update וייכשל לפי הכללים.
+                    await setDoc(doc(db, 'slots', slotId), {
+                        date: data.date,
+                        time: data.time,
+                        createdAt: serverTimestamp(),
+                    });
+                } catch (err) {
+                    console.warn('Slot already taken or write failed:', err.message);
+                    window.dispatchEvent(new CustomEvent('booking:result', {
+                        detail: { ok: false, reason: 'slot-taken' }
+                    }));
+                    return;
+                }
                 try {
                     await addDoc(collection(db, 'bookings'), {
-                        ...e.detail,
+                        ...data,
                         createdAt: serverTimestamp(),
                         status: 'pending',
                         payment: { status: 'unpaid', method: null, amount: null, paidAt: null },
                     });
+                    window.dispatchEvent(new CustomEvent('booking:result', { detail: { ok: true } }));
                 } catch (err) {
                     console.error('Firestore write failed:', err);
+                    window.dispatchEvent(new CustomEvent('booking:result', {
+                        detail: { ok: false, reason: 'write-failed' }
+                    }));
                 }
             });
         } catch (err) {
