@@ -1,0 +1,117 @@
+/* ========== TABLET (<= 1024px) ========== */
+@media (max-width: 1024px) {
+    section { padding: 80px 0; }
+
+    .about-grid { gap: 40px; }
+    .gallery-grid { grid-template-columns: repeat(3, 1fr); }
+    .pricing-grid { grid-template-columns: 1fr; max-width: 500px; margin: 0 auto; }
+    .price-card.featured { transform: scale(1); }
+    .price-card.featured:hover { transform: translateY(-10px); }
+
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+
+    .icons-row { gap: 30px; }
+    .icon-circle { width: 80px; height: 80px; font-size: 2rem; }
+}
+
+/* ========== TABLET / MOBILE (<= 768px) ========== */
+@media (max-width: 768px) {
+    section { padding: 70px 0; }
+
+    /* Navbar - hamburger menu */
+    .hamburger { display: flex; }
+    .nav-links {
+        position: fixed;
+        top: 70px;
+        right: 0;
+        left: 0;
+        background: rgba(13,13,13,0.98);
+        backdrop-filter: blur(15px);
+        flex-direction: column;
+        padding: 30px 24px;
+        gap: 20px;
+        border-bottom: 1px solid rgba(201,169,97,0.2);
+        transform: translateY(-150%);
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .nav-links.active { transform: translateY(0); }
+    .nav-links a { display: block; text-align: center; padding: 8px; font-size: 1.05rem; }
+
+    /* Hero */
+    .hero { background-attachment: scroll; }
+
+    /* About - stack */
+    .about-grid { grid-template-columns: 1fr; gap: 50px; }
+    .about-image { max-width: 380px; margin: 0 auto; }
+    .about-text .section-pretitle,
+    .about-text .section-title { text-align: center; }
+    .about-text .section-title::after { margin: 16px auto 0; }
+    .about-text > p { text-align: center; }
+
+    /* Contact icons - 2x2 grid */
+    .icons-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px 20px;
+        max-width: 380px;
+        margin: 40px auto 0;
+    }
+    .icon-circle { width: 75px; height: 75px; font-size: 1.8rem; }
+
+    /* Gallery - 2 columns */
+    .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
+    /* Reviews */
+    .review-card { padding: 36px 24px; }
+    .review-text { font-size: 1.05rem; }
+    .reviews-track { min-height: 380px; }
+
+    /* Footer */
+    .footer-grid { grid-template-columns: 1fr; gap: 36px; text-align: center; }
+    .footer-grid .logo { justify-content: center; }
+    .footer-social { justify-content: center; }
+
+    .whatsapp-fab {
+        width: 54px;
+        height: 54px;
+        font-size: 1.6rem;
+        bottom: 18px;
+        left: 18px;
+    }
+}
+
+/* ========== SMALL MOBILE (<= 480px) ========== */
+@media (max-width: 480px) {
+    .container { padding: 0 18px; }
+    section { padding: 60px 0; }
+
+    .nav-container { padding: 14px 18px; }
+    .logo { font-size: 1.3rem; }
+    .logo i { font-size: 1.1rem; }
+
+    .hero-pretitle { letter-spacing: 5px; font-size: 0.85rem; }
+    .hero-subtitle { font-size: 1rem; margin-bottom: 30px; }
+    .btn { padding: 12px 26px; font-size: 0.95rem; }
+
+    .badges { grid-template-columns: 1fr; gap: 14px; }
+    .badge { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 18px; }
+    .badge i { margin-bottom: 0; }
+    .badge strong { display: inline; margin-bottom: 0; margin-left: 8px; }
+
+    .icons-row { gap: 24px 14px; }
+    .icon-circle { width: 70px; height: 70px; font-size: 1.6rem; }
+    .contact-icon span { font-size: 0.9rem; }
+
+    .price-card { padding: 40px 24px; }
+    .price { font-size: 3.2rem; }
+
+    .review-card { padding: 30px 18px; }
+    .review-text { font-size: 1rem; }
+    .reviews-track { min-height: 420px; }
+    .reviews-carousel { gap: 8px; }
+    .carousel-btn { width: 40px; height: 40px; font-size: 0.9rem; }
+
+    .hours-table td { padding: 14px 18px; font-size: 0.95rem; }
+
+    .lightbox-close { font-size: 2.4rem; top: 14px; left: 18px; }
+}

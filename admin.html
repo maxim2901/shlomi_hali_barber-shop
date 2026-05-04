@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ניהול | שלומי חלי</title>
+
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Heebo:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <link rel="stylesheet" href="Style/style.css">
+    <link rel="stylesheet" href="Style/admin.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+
+<body class="admin-body">
+
+    <!-- ========== LOGIN SCREEN ========== -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <a href="index.html" class="logo">
+                <i class="fa-solid fa-scissors"></i>
+                <span>שלומי חלי</span>
+            </a>
+            <h1>כניסת מנהל</h1>
+            <p class="login-sub">הזן פרטי התחברות</p>
+            <form id="loginForm" novalidate>
+                <div class="form-group">
+                    <label for="lg-email">אימייל</label>
+                    <input type="email" id="lg-email" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="lg-password">סיסמה</label>
+                    <input type="password" id="lg-password" required autocomplete="current-password">
+                </div>
+                <p class="login-error" id="loginError" hidden></p>
+                <button type="submit" class="btn btn-gold login-btn">
+                    <i class="fa-solid fa-right-to-bracket"></i> התחבר
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========== DASHBOARD ========== -->
+    <div class="dashboard" id="dashboard" hidden>
+
+        <header class="admin-header">
+            <a href="index.html" class="logo">
+                <i class="fa-solid fa-scissors"></i>
+                <span>שלומי חלי</span>
+            </a>
+            <div class="admin-header-right">
+                <span class="admin-user" id="adminUser"></span>
+                <button class="btn btn-outline btn-sm" id="logoutBtn">
+                    <i class="fa-solid fa-right-from-bracket"></i> התנתק
+                </button>
+            </div>
+        </header>
+
+        <main class="admin-main">
+
+            <!-- KPI strip -->
+            <section class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">תורים היום</div>
+                    <div class="kpi-value" id="kpiToday">0</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">לא שולמו</div>
+                    <div class="kpi-value" id="kpiUnpaid">0</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">הכנסות החודש</div>
+                    <div class="kpi-value"><span id="kpiRevenue">0</span> ₪</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">סה"כ לקוחות</div>
+                    <div class="kpi-value" id="kpiTotal">0</div>
+                </div>
+            </section>
+
+            <!-- Filters -->
+            <section class="filters">
+                <h2>תורים</h2>
+                <div class="filters-controls">
+                    <input type="text" id="filterSearch" placeholder="חיפוש לפי שם / טלפון...">
+                    <select id="filterStatus">
+                        <option value="">כל הסטטוסים</option>
+                        <option value="pending">ממתין</option>
+                        <option value="confirmed">מאושר</option>
+                        <option value="completed">הסתיים</option>
+                        <option value="cancelled">בוטל</option>
+                    </select>
+                    <select id="filterPayment">
+                        <option value="">כל התשלומים</option>
+                        <option value="paid">שולם</option>
+                        <option value="unpaid">לא שולם</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Bookings table -->
+            <section class="table-wrap">
+                <table class="bookings-table">
+                    <thead>
+                        <tr>
+                            <th>תאריך</th>
+                            <th>שעה</th>
+                            <th>לקוח</th>
+                            <th>טלפון</th>
+                            <th>שירות</th>
+                            <th>סכום</th>
+                            <th>סטטוס</th>
+                            <th>תשלום</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingsBody">
+                        <tr>
+                            <td colspan="9" class="empty-row">טוען...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+        </main>
+
+        <!-- ========== EDIT DRAWER ========== -->
+        <aside class="drawer" id="drawer" aria-hidden="true">
+            <div class="drawer-backdrop" data-close-drawer></div>
+            <div class="drawer-panel">
+                <button class="drawer-close" data-close-drawer aria-label="סגור">&times;</button>
+                <h2>פרטי תור</h2>
+                <div class="drawer-body" id="drawerBody"></div>
+
+                <div class="drawer-section">
+                    <h3>תשלום</h3>
+                    <div class="form-group">
+                        <label for="pay-status">סטטוס תשלום</label>
+                        <select id="pay-status">
+                            <option value="unpaid">לא שולם</option>
+                            <option value="paid">שולם</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="pay-method">אמצעי תשלום</label>
+                        <select id="pay-method">
+                            <option value="">בחר...</option>
+                            <option value="cash">מזומן</option>
+                            <option value="bit">ביט</option>
+                            <option value="paybox">PayBox</option>
+                            <option value="card">כרטיס אשראי</option>
+                            <option value="transfer">העברה בנקאית</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pay-amount">סכום ששולם (₪)</label>
+                            <input type="number" id="pay-amount" min="0" step="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="pay-date">תאריך תשלום</label>
+                            <input type="date" id="pay-date">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="drawer-section">
+                    <h3>סטטוס תור</h3>
+                    <div class="form-group">
+                        <label for="bk-status">סטטוס</label>
+                        <select id="bk-status">
+                            <option value="pending">ממתין</option>
+                            <option value="confirmed">מאושר</option>
+                            <option value="completed">הסתיים</option>
+                            <option value="cancelled">בוטל</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="drawer-actions">
+                    <button class="btn btn-gold" id="saveBtn">
+                        <i class="fa-solid fa-floppy-disk"></i> שמור שינויים
+                    </button>
+                    <button class="btn btn-outline" id="invoiceBtn">
+                        <i class="fa-solid fa-file-pdf"></i> הפק חשבונית
+                    </button>
+                    <button class="btn btn-danger" id="deleteBtn">
+                        <i class="fa-solid fa-trash"></i> מחק
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- Hidden invoice template (rendered to PDF) -->
+    <div id="invoiceTemplate" class="invoice-template" hidden></div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast" hidden></div>
+
+    <script type="module" src="JS/admin.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // קולקציית התורים: כל אחד יכול ליצור תור חדש (טופס ציבורי באתר),
+    // אבל רק משתמש מאומת (הספר) יכול לקרוא, לעדכן או למחוק.
+    match /bookings/{bookingId} {
+      allow create: if
+        // ולידציה בסיסית - מונע ספאם וכתיבת זבל
+        request.resource.data.firstName is string &&
+        request.resource.data.firstName.size() > 0 &&
+        request.resource.data.firstName.size() < 50 &&
+        request.resource.data.lastName is string &&
+        request.resource.data.lastName.size() > 0 &&
+        request.resource.data.lastName.size() < 50 &&
+        request.resource.data.phone is string &&
+        request.resource.data.phone.size() < 20 &&
+        request.resource.data.service is string &&
+        request.resource.data.date is string &&
+        request.resource.data.time is string;
+
+      allow read, update, delete: if request.auth != null;
+    }
+
+    // ברירת מחדל - חסום כל דבר אחר
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
