@@ -182,7 +182,8 @@ function startListening() {
         allBookings = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         renderBookings();
         renderKpis();
-        if (calendarInstance) calendarInstance.refetchEvents();
+        if (!calendarInstance) initCalendar();
+        else calendarInstance.refetchEvents();
     }, (err) => {
         console.error('Snapshot error:', err);
         bookingsBody.innerHTML = `<tr><td colspan="9" class="empty-row">שגיאה בטעינת תורים. בדוק את הרשאות Firestore.</td></tr>`;
@@ -520,19 +521,7 @@ document.getElementById('rejectBtn').addEventListener('click', async () => {
     }
 });
 
-// ========== VIEW TABS ==========
-document.querySelectorAll('.view-tab').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.view-tab').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const view = btn.dataset.view;
-        document.querySelector('.filters').hidden             = view !== 'list';
-        document.querySelector('.bookings-table-wrap').hidden = view !== 'list';
-        document.getElementById('calendarView').hidden        = view !== 'calendar';
-        if (view === 'calendar') initCalendar();
-    });
-});
-
+// ========== CALENDAR ==========
 function initCalendar() {
     if (calendarInstance) {
         calendarInstance.refetchEvents();
@@ -544,14 +533,18 @@ function initCalendar() {
         direction: 'rtl',
         headerToolbar: { start: 'prev,next today', center: 'title', end: 'dayGridMonth,timeGridWeek' },
         height: 'auto',
-        events: () => allBookings
-            .filter(b => b.status !== 'cancelled')
-            .map(b => ({
-                id: b.id,
-                title: `${b.time} ${b.firstName} ${b.lastName}`,
-                start: `${b.date}T${b.time}`,
-                color: STATUS_COLOR[b.status] ?? '#888',
-            })),
+        events: (fetchInfo, successCallback) => {
+            successCallback(
+                allBookings
+                    .filter(b => b.status !== 'cancelled')
+                    .map(b => ({
+                        id: b.id,
+                        title: `${b.time} ${b.firstName} ${b.lastName}`,
+                        start: `${b.date}T${b.time}`,
+                        color: STATUS_COLOR[b.status] ?? '#888',
+                    }))
+            );
+        },
         eventClick: (info) => openDrawer(info.event.id),
     });
     calendarInstance.render();

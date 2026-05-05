@@ -67,15 +67,6 @@
             </div>
         </header>
 
-        <div class="view-tabs">
-            <button class="view-tab active" data-view="list">
-                <i class="fa-solid fa-list"></i> תורים
-            </button>
-            <button class="view-tab" data-view="calendar">
-                <i class="fa-solid fa-calendar-days"></i> לוח שנה
-            </button>
-        </div>
-
         <main class="admin-main">
 
             <!-- KPI strip -->
@@ -143,7 +134,8 @@
             </section>
 
             <!-- Calendar view -->
-            <div id="calendarView" hidden>
+            <div id="calendarView">
+                <h2 style="margin-bottom:16px">לוח שנה</h2>
                 <div id="calendarEl"></div>
             </div>
 
@@ -156,6 +148,19 @@
                 <button class="drawer-close" data-close-drawer aria-label="סגור">&times;</button>
                 <h2>פרטי תור</h2>
                 <div class="drawer-body" id="drawerBody"></div>
+
+                <div class="drawer-section">
+                    <h3>סטטוס תור</h3>
+                    <div class="form-group">
+                        <label for="bk-status">סטטוס</label>
+                        <select id="bk-status">
+                            <option value="pending">ממתין</option>
+                            <option value="confirmed">מאושר</option>
+                            <option value="completed">הסתיים</option>
+                            <option value="cancelled">בוטל</option>
+                        </select>
+                    </div>
+                </div>
 
                 <div class="drawer-section">
                     <h3>תשלום</h3>
@@ -186,19 +191,6 @@
                             <label for="pay-date">תאריך תשלום</label>
                             <input type="date" id="pay-date">
                         </div>
-                    </div>
-                </div>
-
-                <div class="drawer-section">
-                    <h3>סטטוס תור</h3>
-                    <div class="form-group">
-                        <label for="bk-status">סטטוס</label>
-                        <select id="bk-status">
-                            <option value="pending">ממתין</option>
-                            <option value="confirmed">מאושר</option>
-                            <option value="completed">הסתיים</option>
-                            <option value="cancelled">בוטל</option>
-                        </select>
                     </div>
                 </div>
 
