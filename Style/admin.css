@@ -508,6 +508,52 @@
     padding-top: 16px;
 }
 
+/* ========== VIEW TABS ========== */
+.view-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 0 32px;
+    margin-bottom: -1px;
+}
+.view-tab {
+    padding: 10px 22px;
+    border-radius: 50px;
+    border: 2px solid rgba(201,169,97,0.3);
+    background: transparent;
+    color: var(--text-muted);
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: inherit;
+    font-size: 0.95rem;
+}
+.view-tab.active, .view-tab:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+/* ========== CALENDAR ========== */
+#calendarEl {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 16px;
+    direction: ltr;
+}
+.fc { font-family: 'Heebo', sans-serif !important; }
+.fc-toolbar-title { color: var(--text-primary) !important; font-size: 1.1rem !important; }
+.fc-button-primary { background: var(--gold) !important; border-color: var(--gold) !important; color: var(--bg-primary) !important; font-weight: 700 !important; }
+.fc-button-primary:hover { opacity: 0.85 !important; }
+.fc-button-primary:disabled { opacity: 0.5 !important; }
+.fc-daygrid-day { background: var(--bg-primary) !important; }
+.fc-day-today { background: rgba(201,169,97,0.1) !important; }
+.fc-col-header-cell { background: var(--bg-secondary) !important; }
+.fc-col-header-cell-cushion { color: var(--text-muted) !important; text-decoration: none !important; }
+.fc-daygrid-day-number { color: var(--text-muted) !important; text-decoration: none !important; }
+.fc-scrollgrid { border-color: rgba(201,169,97,0.15) !important; }
+.fc-scrollgrid-section > td { border-color: rgba(201,169,97,0.15) !important; }
+.fc td, .fc th { border-color: rgba(201,169,97,0.1) !important; }
+.fc-event { cursor: pointer; font-size: 0.8rem; }
+
 /* ========== APPROVE / REJECT BUTTONS ========== */
 .action-btns {
     display: flex;

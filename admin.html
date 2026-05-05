@@ -19,6 +19,8 @@
     <link rel="stylesheet" href="Style/admin.css">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js"></script>
 </head>
 
 <body class="admin-body">
@@ -64,6 +66,15 @@
                 </button>
             </div>
         </header>
+
+        <div class="view-tabs">
+            <button class="view-tab active" data-view="list">
+                <i class="fa-solid fa-list"></i> תורים
+            </button>
+            <button class="view-tab" data-view="calendar">
+                <i class="fa-solid fa-calendar-days"></i> לוח שנה
+            </button>
+        </div>
 
         <main class="admin-main">
 
@@ -130,6 +141,11 @@
                     </tbody>
                 </table>
             </section>
+
+            <!-- Calendar view -->
+            <div id="calendarView" hidden>
+                <div id="calendarEl"></div>
+            </div>
 
         </main>
 
