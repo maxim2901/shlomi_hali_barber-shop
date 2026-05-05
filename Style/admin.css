@@ -539,7 +539,6 @@
     background: var(--bg-secondary);
     border-radius: 12px;
     padding: 16px;
-    direction: ltr;
     overflow: hidden;
 }
 .fc { font-family: 'Heebo', sans-serif !important; }
@@ -580,7 +579,7 @@
 .fc td, .fc th { border-color: rgba(201,169,97,0.08) !important; }
 .fc-event { cursor: pointer; font-size: 0.78rem !important; border-radius: 4px !important; border: none !important; padding: 2px 5px !important; }
 .fc-event-title { font-weight: 600 !important; }
-.fc-daygrid-event-dot { display: none !important; }
+.fc-daygrid-event-dot { border-width: 6px !important; }
 
 /* ========== APPROVE / REJECT BUTTONS ========== */
 .action-btns {
