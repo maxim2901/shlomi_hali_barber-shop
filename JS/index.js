@@ -387,25 +387,6 @@ bookingForm.addEventListener('submit', async (e) => {
         return;
     }
 
-    // Build WhatsApp message
-    const lines = [
-        '*בקשת תור חדשה* ✂️',
-        '',
-        `*שם:* ${firstName} ${lastName}`,
-        `*טלפון:* ${phone}`,
-        `*שירות:* ${service}`,
-        `*תאריך:* ${dateDisplay} (יום ${DAY_NAMES[dow]})`,
-        `*שעה:* ${time}`,
-    ];
-    if (notes) lines.push(`*הערות:* ${notes}`);
-    lines.push('', 'אשמח לאישור 🙏');
-
-    const message = encodeURIComponent(lines.join('\n'));
-    const waUrl = `https://wa.me/${BARBER_PHONE_INTL}?text=${message}`;
-
-    // Open WhatsApp in new tab
-    window.open(waUrl, '_blank');
-
     // Show success state
     successSummary.innerHTML = `
         <strong>שירות:</strong> ${service}<br>

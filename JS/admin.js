@@ -116,6 +116,7 @@ if (!FIREBASE_READY) {
             loginScreen.hidden = true;
             dashboard.hidden = false;
             adminUserEl.textContent = user.email;
+            if (Notification.permission === 'default') Notification.requestPermission();
             startListening();
         } else {
             loginScreen.hidden = false;
@@ -163,6 +164,13 @@ function startListening() {
     if (unsubBookings) return;
     const q = query(collection(db, 'bookings'), orderBy('createdAt', 'desc'));
     unsubBookings = onSnapshot(q, (snap) => {
+        snap.docChanges().forEach(change => {
+            if (change.type === 'added') {
+                const b = change.doc.data();
+                const age = Date.now() - (b.createdAt?.toMillis?.() ?? 0);
+                if (b.status === 'pending' && age < 120000) notifyNewBooking(b);
+            }
+        });
         allBookings = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         renderBookings();
         renderKpis();
@@ -443,3 +451,62 @@ function generateInvoice(b) {
     win.document.close();
     showToast('החשבונית נפתחה להדפסה');
 }
+
+// ========== NOTIFICATIONS ==========
+function notifyNewBooking(b) {
+    if (Notification.permission !== 'granted') return;
+    new Notification(`תור חדש! ${b.firstName} ${b.lastName}`, {
+        body: `${b.service} · ${fmtDateHE(b.date)} · ${b.time}`,
+        icon: '/images/favicon.svg',
+    });
+}
+
+// ========== APPROVE / REJECT ==========
+function customerPhone(b) {
+    return b.phone.replace(/[-\s]/g, '').replace(/^0/, '972');
+}
+
+function openWhatsAppApproval(b, note) {
+    let msg = `שלום ${b.firstName}! 😊\n\nהתור שלך אושר ✅\n\n📅 תאריך: ${fmtDateHE(b.date)}\n⏰ שעה: ${b.time}\n✂️ שירות: ${b.service}`;
+    if (b.price) msg += `\n💰 מחיר: ${b.price} ₪`;
+    msg += `\n\n📍 עמוס 22, נשר`;
+    if (note) msg += `\n\n📝 הערה: ${note}`;
+    msg += `\n\nמחכה לך! – שלומי חלי 💈`;
+    window.open(`https://wa.me/${customerPhone(b)}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function openWhatsAppRejection(b, reason) {
+    let msg = `שלום ${b.firstName},\n\nלצערי לא ניתן לאשר את התור ❌\n\n📅 תאריך שביקשת: ${fmtDateHE(b.date)}\n⏰ שעה: ${b.time}`;
+    if (reason) msg += `\n\n📝 סיבה: ${reason}`;
+    msg += `\n\nמוזמן לקבוע תור חדש באתר 😊\n– שלומי חלי 💈`;
+    window.open(`https://wa.me/${customerPhone(b)}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+document.getElementById('approveBtn').addEventListener('click', async () => {
+    if (!currentBookingId) return;
+    const b = allBookings.find(x => x.id === currentBookingId);
+    const note = document.getElementById('action-note').value.trim();
+    try {
+        await updateDoc(doc(db, 'bookings', currentBookingId), { status: 'confirmed' });
+        openWhatsAppApproval(b, note);
+        showToast('התור אושר ✅');
+        closeDrawer();
+    } catch (err) {
+        showToast('שגיאה בעדכון', true);
+    }
+});
+
+document.getElementById('rejectBtn').addEventListener('click', async () => {
+    if (!currentBookingId) return;
+    const b = allBookings.find(x => x.id === currentBookingId);
+    const reason = document.getElementById('action-note').value.trim();
+    try {
+        await updateDoc(doc(db, 'bookings', currentBookingId), { status: 'cancelled' });
+        await releaseSlot(b);
+        openWhatsAppRejection(b, reason);
+        showToast('התור נדחה');
+        closeDrawer();
+    } catch (err) {
+        showToast('שגיאה בעדכון', true);
+    }
+});

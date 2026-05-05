@@ -508,6 +508,36 @@
     padding-top: 16px;
 }
 
+/* ========== APPROVE / REJECT BUTTONS ========== */
+.action-btns {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+.btn-approve, .btn-reject {
+    flex: 1;
+    padding: 12px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: inherit;
+}
+.btn-approve {
+    border: 2px solid #4caf50;
+    color: #4caf50;
+    background: transparent;
+}
+.btn-approve:hover { background: #4caf50; color: #fff; }
+.btn-reject {
+    border: 2px solid #e57373;
+    color: #e57373;
+    background: transparent;
+}
+.btn-reject:hover { background: #e57373; color: #fff; }
+
 /* ========== RESPONSIVE ========== */
 @media (max-width: 720px) {
     /* Header */
