@@ -366,86 +366,80 @@ function generateInvoice(b) {
         ? `${String(b.payment.paidAt.toDate().getDate()).padStart(2,'0')}/${String(b.payment.paidAt.toDate().getMonth()+1).padStart(2,'0')}/${b.payment.paidAt.toDate().getFullYear()}`
         : '—';
 
-    invTpl.innerHTML = `
-        <div class="inv-header">
-            <div class="inv-brand">
-                <h1>${BUSINESS.name}</h1>
-                <p>${BUSINESS.tagline}</p>
-                <p>${BUSINESS.address}</p>
-                <p>${BUSINESS.phone}</p>
-            </div>
-            <div class="inv-meta">
-                <h2>קבלה / סיכום שירות</h2>
-                <p><strong>מס׳ מסמך:</strong> ${invoiceNum}</p>
-                <p><strong>הופק בתאריך:</strong> ${issuedHE}</p>
-            </div>
-        </div>
+    const html = `<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<title>קבלה ${invoiceNum}</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Heebo', sans-serif; direction: rtl; background: #fff; color: #111; padding: 50px 60px; font-size: 15px; }
+  .inv-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #c9a961; padding-bottom: 20px; margin-bottom: 30px; }
+  .inv-brand h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; letter-spacing: 3px; color: #c9a961; }
+  .inv-brand p { color: #555; font-size: 0.9rem; margin-top: 4px; }
+  .inv-meta h2 { font-size: 1.3rem; color: #1a1a1a; margin-bottom: 8px; }
+  .inv-meta p { font-size: 0.9rem; color: #444; margin-top: 4px; }
+  .section-title { color: #c9a961; font-size: 0.9rem; letter-spacing: 1.5px; text-transform: uppercase; margin: 24px 0 10px; border-bottom: 1px solid #eee; padding-bottom: 6px; }
+  .inv-customer p { margin: 4px 0; font-size: 0.95rem; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; }
+  thead th { background: #1a1a1a; color: #c9a961; text-align: right; padding: 10px 14px; font-size: 0.9rem; }
+  tbody td { padding: 12px 14px; border-bottom: 1px solid #eee; font-size: 0.95rem; }
+  .inv-total { text-align: left; margin-top: 16px; padding: 14px 20px; background: #f7f3e8; border-right: 4px solid #c9a961; font-size: 1.15rem; font-weight: 700; }
+  .inv-total span { color: #c9a961; font-size: 1.3rem; margin-right: 12px; }
+  .inv-payment { margin: 20px 0; padding: 14px 18px; background: #fafafa; border-radius: 6px; font-size: 0.95rem; }
+  .inv-payment div { margin: 4px 0; }
+  .inv-payment strong { color: #c9a961; margin-left: 8px; }
+  .inv-disclaimer { margin-top: 40px; padding: 14px 18px; background: #fff3cd; border-right: 4px solid #ffc107; font-size: 0.85rem; color: #856404; border-radius: 4px; }
+  .inv-footer { margin-top: 30px; text-align: center; color: #888; font-size: 0.8rem; border-top: 1px solid #eee; padding-top: 14px; }
+</style>
+</head>
+<body>
+  <div class="inv-header">
+    <div class="inv-brand">
+      <h1>${BUSINESS.name}</h1>
+      <p>${BUSINESS.tagline}</p>
+      <p>${BUSINESS.address}</p>
+      <p>${BUSINESS.phone}</p>
+    </div>
+    <div class="inv-meta">
+      <h2>קבלה / סיכום שירות</h2>
+      <p><strong>מס׳ מסמך:</strong> ${invoiceNum}</p>
+      <p><strong>הופק בתאריך:</strong> ${issuedHE}</p>
+    </div>
+  </div>
+  <div class="section-title">פרטי הלקוח</div>
+  <div class="inv-customer">
+    <p><strong>שם:</strong> ${escapeHtml(b.firstName)} ${escapeHtml(b.lastName)}</p>
+    <p><strong>טלפון:</strong> ${escapeHtml(b.phone)}</p>
+  </div>
+  <div class="section-title">פירוט השירות</div>
+  <table>
+    <thead><tr><th>תיאור</th><th>תאריך</th><th>שעה</th><th>סכום</th></tr></thead>
+    <tbody><tr>
+      <td>${escapeHtml(b.service)}</td>
+      <td>${fmtDateHE(b.date)}</td>
+      <td>${escapeHtml(b.time)}</td>
+      <td>${amount} ₪</td>
+    </tr></tbody>
+  </table>
+  <div class="inv-total">סה"כ לתשלום: <span>${amount} ₪</span></div>
+  <div class="inv-payment">
+    <div><strong>סטטוס:</strong> ${payS}</div>
+    <div><strong>אמצעי תשלום:</strong> ${method}</div>
+    <div><strong>תאריך תשלום:</strong> ${paidAt}</div>
+  </div>
+  <div class="inv-disclaimer">
+    <strong>הערה חשובה:</strong> מסמך זה הוא סיכום שירות לצורכי תיעוד פנימי בלבד.
+    אינו מהווה חשבונית מס רשמית כנדרש על פי דין.
+  </div>
+  <div class="inv-footer">${BUSINESS.name} · ${BUSINESS.address} · ${BUSINESS.phone}</div>
+  <script>window.onload = () => { window.print(); }<\/script>
+</body>
+</html>`;
 
-        <div class="inv-section-title">פרטי הלקוח</div>
-        <div class="inv-customer">
-            <p><strong>שם:</strong> ${escapeHtml(b.firstName)} ${escapeHtml(b.lastName)}</p>
-            <p><strong>טלפון:</strong> ${escapeHtml(b.phone)}</p>
-        </div>
-
-        <div class="inv-section-title">פירוט השירות</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>תיאור</th>
-                    <th>תאריך</th>
-                    <th>שעה</th>
-                    <th>סכום</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>${escapeHtml(b.service)}</td>
-                    <td>${fmtDateHE(b.date)}</td>
-                    <td>${escapeHtml(b.time)}</td>
-                    <td>${amount} ₪</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="inv-total">
-            סה"כ לתשלום: <span>${amount} ₪</span>
-        </div>
-
-        <div class="inv-payment">
-            <div><strong>סטטוס:</strong> ${payS}</div>
-            <div><strong>אמצעי תשלום:</strong> ${method}</div>
-            <div><strong>תאריך תשלום:</strong> ${paidAt}</div>
-        </div>
-
-        <div class="inv-disclaimer">
-            <strong>הערה חשובה:</strong> מסמך זה הוא סיכום שירות לצורכי תיעוד פנימי בלבד.
-            אינו מהווה חשבונית מס רשמית כנדרש על פי דין. חשבונית מס תופק בנפרד באמצעות תוכנת חשבוניות מאושרת.
-        </div>
-
-        <div class="inv-footer">
-            ${BUSINESS.name} · ${BUSINESS.address} · ${BUSINESS.phone}
-        </div>
-    `;
-
-    invTpl.hidden = false;
-
-    const filename = `invoice-${b.date}-${b.firstName}-${b.lastName}.pdf`;
-    const opt = {
-        margin:       10,
-        filename:     filename,
-        image:        { type: 'jpeg', quality: 0.97 },
-        html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff', scrollX: 0, scrollY: 0 },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-    };
-
-    setTimeout(() => {
-        html2pdf().set(opt).from(invTpl).save().then(() => {
-            invTpl.hidden = true;
-            showToast('החשבונית הופקה');
-        }).catch((err) => {
-            console.error(err);
-            invTpl.hidden = true;
-            showToast('שגיאה ביצירת PDF', true);
-        });
-    }, 300);
+    const win = window.open('', '_blank');
+    win.document.write(html);
+    win.document.close();
+    showToast('החשבונית נפתחה להדפסה');
 }
