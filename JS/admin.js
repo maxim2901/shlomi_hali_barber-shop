@@ -531,7 +531,8 @@ function initCalendar() {
         initialView: 'dayGridMonth',
         locale: 'he',
         direction: 'rtl',
-        headerToolbar: { start: 'prev,next today', center: 'title', end: 'dayGridMonth,timeGridWeek' },
+        headerToolbar: { start: 'prev,next', center: 'title', end: 'dayGridMonth,timeGridWeek today' },
+        buttonText: { today: 'היום', month: 'חודש', week: 'שבוע' },
         height: 'auto',
         events: (fetchInfo, successCallback) => {
             successCallback(
