@@ -13,12 +13,12 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/10.13.0/firebas
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
 const firebaseConfig = {
-    apiKey: "REPLACE_ME",
-    authDomain: "REPLACE_ME.firebaseapp.com",
-    projectId: "REPLACE_ME",
-    storageBucket: "REPLACE_ME.appspot.com",
-    messagingSenderId: "REPLACE_ME",
-    appId: "REPLACE_ME"
+    apiKey: "AIzaSyA8A27hvmfFa9FVKa_GS9REumYhtPCo5TM",
+    authDomain: "shlomi-hali-barber.firebaseapp.com",
+    projectId: "shlomi-hali-barber",
+    storageBucket: "shlomi-hali-barber.firebasestorage.app",
+    messagingSenderId: "277868526185",
+    appId: "1:277868526185:web:8463d9c7fdc152e15b00f8"
 };
 
 const app = initializeApp(firebaseConfig);
