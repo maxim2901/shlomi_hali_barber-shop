@@ -28,6 +28,9 @@
 }
 
 /* ========== LOGIN SCREEN ========== */
+.login-screen[hidden] {
+    display: none !important;
+}
 .login-screen {
     min-height: 100vh;
     display: flex;
