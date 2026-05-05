@@ -431,19 +431,21 @@ function generateInvoice(b) {
 
     const filename = `invoice-${b.date}-${b.firstName}-${b.lastName}.pdf`;
     const opt = {
-        margin:       0,
+        margin:       10,
         filename:     filename,
         image:        { type: 'jpeg', quality: 0.97 },
-        html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+        html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff', scrollX: 0, scrollY: 0 },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
     };
 
-    html2pdf().set(opt).from(invTpl).save().then(() => {
-        invTpl.hidden = true;
-        showToast('החשבונית הופקה');
-    }).catch((err) => {
-        console.error(err);
-        invTpl.hidden = true;
-        showToast('שגיאה ביצירת PDF', true);
-    });
+    setTimeout(() => {
+        html2pdf().set(opt).from(invTpl).save().then(() => {
+            invTpl.hidden = true;
+            showToast('החשבונית הופקה');
+        }).catch((err) => {
+            console.error(err);
+            invTpl.hidden = true;
+            showToast('שגיאה ביצירת PDF', true);
+        });
+    }, 300);
 }

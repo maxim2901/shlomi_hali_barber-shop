@@ -394,7 +394,7 @@
 
 /* ========== INVOICE TEMPLATE (rendered to PDF) ========== */
 .invoice-template {
-    position: absolute;
+    position: fixed;
     left: -9999px;
     top: 0;
     width: 800px;
