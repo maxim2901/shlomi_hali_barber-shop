@@ -530,11 +530,13 @@ function initCalendar() {
         return;
     }
     calendarInstance = new FullCalendar.Calendar(document.getElementById('calendarEl'), {
-        initialView: 'dayGridMonth',
+        initialView: window.innerWidth <= 700 ? 'listMonth' : 'dayGridMonth',
         locale: 'he',
         direction: 'rtl',
-        headerToolbar: { start: 'prev,next', center: 'title', end: 'dayGridMonth,timeGridWeek today' },
-        buttonText: { today: 'היום', month: 'חודש', week: 'שבוע' },
+        headerToolbar: window.innerWidth <= 700
+            ? { start: 'prev,next', center: 'title', end: 'listMonth,listWeek today' }
+            : { start: 'prev,next', center: 'title', end: 'dayGridMonth,timeGridWeek today' },
+        buttonText: { today: 'היום', month: 'חודש', week: 'שבוע', list: 'רשימה' },
         height: 'auto',
         allDaySlot: false,
         nowIndicator: true,
@@ -544,8 +546,11 @@ function initCalendar() {
         slotLabelFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
         eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
         expandRows: true,
+        noEventsText: 'אין תורים בתקופה זו',
         views: {
-            dayGridMonth: { displayEventTime: false }, // מובייל: מציג רק שם (ללא שעה) — נותן מקום לשם
+            dayGridMonth: { displayEventTime: false },
+            listWeek:  { buttonText: 'שבוע' },
+            listMonth: { buttonText: 'חודש' },
         },
         events: (fetchInfo, successCallback) => {
             successCallback(

@@ -624,11 +624,20 @@
 .fc-daygrid-event-dot { border-width: 5px !important; margin-inline-end: 4px !important; }
 .fc-daygrid-event { padding: 1px 4px !important; }
 
-/* מובייל — אירועי לוח שנה */
-@media (max-width: 600px) {
-    .fc-event { font-size: 0.72rem !important; padding: 2px 3px !important; }
-    .fc-col-header-cell-cushion { font-size: 0.72rem !important; }
-    .fc-daygrid-day-number { font-size: 0.75rem !important; }
+/* תצוגת רשימה (list view) */
+.fc-list-day-cushion { background: var(--bg-secondary) !important; }
+.fc-list-day-text, .fc-list-day-side-text { color: var(--gold) !important; font-weight: 700 !important; text-decoration: none !important; }
+.fc-list-event { background: transparent !important; }
+.fc-list-event:hover td { background: rgba(201,169,97,0.08) !important; cursor: pointer; }
+.fc-list-event-time { color: var(--text-muted) !important; font-size: 0.85rem !important; white-space: nowrap !important; }
+.fc-list-event-title { color: var(--text-primary) !important; font-weight: 600 !important; }
+.fc-list-event-dot { border-width: 8px !important; }
+.fc-list-table td { border-color: rgba(201,169,97,0.08) !important; padding: 10px 14px !important; }
+.fc-list-empty { background: var(--bg-primary) !important; color: var(--text-muted) !important; }
+.fc-list-empty-cushion { color: var(--text-muted) !important; }
+
+/* מובייל — כפתורים קומפקטיים */
+@media (max-width: 700px) {
     .fc-toolbar-title { font-size: 1rem !important; }
     .fc-button-primary { padding: 4px 10px !important; font-size: 0.78rem !important; }
 }
