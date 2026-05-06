@@ -33,5 +33,6 @@ window.__FIREBASE_READY = FIREBASE_READY;
 // ========== TELEGRAM ==========
 // צור בוט דרך @BotFather בטלגרם וקבל את הטוקן.
 // שלח הודעה לבוט → פתח https://api.telegram.org/bot{TOKEN}/getUpdates → העתק chat.id
-export const TELEGRAM_BOT_TOKEN = 'REPLACE_WITH_BOT_TOKEN';
-export const TELEGRAM_CHAT_ID   = 'REPLACE_WITH_CHAT_ID';
+export const TELEGRAM_BOT_TOKEN = '8790611697:AAF4ZBUSWlOQnmBAHfrxYQfkaQNvOL_7YvI';
+export const TELEGRAM_CHAT_ID   = '1151056422';
+
