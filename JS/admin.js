@@ -124,7 +124,9 @@ if (!FIREBASE_READY) {
             loginScreen.hidden = true;
             dashboard.hidden = false;
             adminUserEl.textContent = user.email;
-            if (Notification.permission === 'default') Notification.requestPermission();
+            if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
             startListening();
         } else {
             loginScreen.hidden = false;
@@ -464,7 +466,7 @@ function generateInvoice(b) {
 
 // ========== NOTIFICATIONS ==========
 function notifyNewBooking(b) {
-    if (Notification.permission !== 'granted') return;
+    if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
     new Notification(`תור חדש! ${b.firstName} ${b.lastName}`, {
         body: `${b.service} · ${fmtDateHE(b.date)} · ${b.time}`,
         icon: '/images/favicon.svg',
@@ -534,16 +536,29 @@ function initCalendar() {
         headerToolbar: { start: 'prev,next', center: 'title', end: 'dayGridMonth,timeGridWeek today' },
         buttonText: { today: 'היום', month: 'חודש', week: 'שבוע' },
         height: 'auto',
+        allDaySlot: false,
+        nowIndicator: true,
+        slotMinTime: '08:00:00',
+        slotMaxTime: '22:00:00',
+        slotDuration: '00:30:00',
+        slotLabelFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
+        eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
+        expandRows: true,
         events: (fetchInfo, successCallback) => {
             successCallback(
                 allBookings
                     .filter(b => b.status !== 'cancelled')
-                    .map(b => ({
-                        id: b.id,
-                        title: `${b.time} ${b.firstName} ${b.lastName}`,
-                        start: `${b.date}T${b.time}`,
-                        color: STATUS_COLOR[b.status] ?? '#888',
-                    }))
+                    .map(b => {
+                        const start = new Date(`${b.date}T${b.time}`);
+                        const end   = new Date(start.getTime() + 30 * 60 * 1000);
+                        return {
+                            id: b.id,
+                            title: `${b.firstName} ${b.lastName}`,
+                            start: start.toISOString(),
+                            end:   end.toISOString(),
+                            color: STATUS_COLOR[b.status] ?? '#888',
+                        };
+                    })
             );
         },
         eventClick: (info) => openDrawer(info.event.id),
