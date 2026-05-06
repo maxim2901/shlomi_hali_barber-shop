@@ -384,11 +384,47 @@
     <!-- Firebase persistence (module - works only when served via http/https) -->
     <script type="module">
         try {
-            const { db, FIREBASE_READY } = await import('./JS/firebase-config.js');
+            const { db, FIREBASE_READY, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID } = await import('./JS/firebase-config.js');
             const {
                 collection, addDoc, setDoc, doc, query, where, getDocs,
                 serverTimestamp,
             } = await import('https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js');
+
+            // ========== TELEGRAM NOTIFICATION ==========
+            async function sendTelegramNotification(data) {
+                if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN === 'REPLACE_WITH_BOT_TOKEN') return;
+
+                const [y, m, d] = data.date.split('-');
+                const dateStr = `${d}/${m}/${y}`;
+                const phone = data.phone.replace(/[-\s]/g, '').replace(/^0/, '972');
+
+                let approvalMsg = `שלום ${data.firstName}! 😊\n\nהתור שלך אושר ✅\n\n📅 תאריך: ${dateStr}\n⏰ שעה: ${data.time}\n✂️ שירות: ${data.service}`;
+                if (data.price) approvalMsg += `\n💰 מחיר: ${data.price} ₪`;
+                approvalMsg += `\n\n📍 עמוס 22, נשר\n\nמחכה לך! – שלומי חלי 💈`;
+
+                const rejectionMsg = `שלום ${data.firstName},\n\nלצערי לא ניתן לאשר את התור ❌\n\n📅 תאריך שביקשת: ${dateStr}\n⏰ שעה: ${data.time}\n\nמוזמן לקבוע תור חדש באתר 😊\n– שלומי חלי 💈`;
+
+                const approveUrl = `https://wa.me/${phone}?text=${encodeURIComponent(approvalMsg)}`;
+                const rejectUrl  = `https://wa.me/${phone}?text=${encodeURIComponent(rejectionMsg)}`;
+
+                const text = `🔔 <b>הזמנה חדשה!</b>\n\n👤 ${data.firstName} ${data.lastName}\n📞 ${data.phone}\n✂️ ${data.service}\n📅 ${dateStr}\n🕐 ${data.time}${data.price ? `\n💰 ${data.price} ₪` : ''}${data.notes ? `\n📝 ${data.notes}` : ''}`;
+
+                await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text,
+                        parse_mode: 'HTML',
+                        reply_markup: {
+                            inline_keyboard: [[
+                                { text: '✅ אשר ושלח WhatsApp', url: approveUrl },
+                                { text: '❌ דחה ושלח WhatsApp', url: rejectUrl },
+                            ]]
+                        }
+                    })
+                });
+            }
 
             // טעינת המשבצות התפוסות בתאריך נבחר → דיווח חזרה לטופס.
             window.addEventListener('booking:date-selected', async (e) => {
@@ -435,6 +471,7 @@
                         payment: { status: 'unpaid', method: null, amount: null, paidAt: null },
                     });
                     window.dispatchEvent(new CustomEvent('booking:result', { detail: { ok: true } }));
+                    sendTelegramNotification(data).catch(e => console.warn('Telegram notification failed:', e));
                 } catch (err) {
                     console.error('Firestore write failed:', err);
                     window.dispatchEvent(new CustomEvent('booking:result', {
