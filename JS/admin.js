@@ -498,9 +498,9 @@ document.getElementById('approveBtn').addEventListener('click', async () => {
     if (!currentBookingId) return;
     const b = allBookings.find(x => x.id === currentBookingId);
     const note = document.getElementById('action-note').value.trim();
+    openWhatsAppApproval(b, note); // iOS: חייב לפני כל await
     try {
         await updateDoc(doc(db, 'bookings', currentBookingId), { status: 'confirmed' });
-        openWhatsAppApproval(b, note);
         showToast('התור אושר ✅');
         closeDrawer();
     } catch (err) {
@@ -512,10 +512,10 @@ document.getElementById('rejectBtn').addEventListener('click', async () => {
     if (!currentBookingId) return;
     const b = allBookings.find(x => x.id === currentBookingId);
     const reason = document.getElementById('action-note').value.trim();
+    openWhatsAppRejection(b, reason); // iOS: חייב לפני כל await
     try {
         await updateDoc(doc(db, 'bookings', currentBookingId), { status: 'cancelled' });
         await releaseSlot(b);
-        openWhatsAppRejection(b, reason);
         showToast('התור נדחה');
         closeDrawer();
     } catch (err) {
