@@ -407,7 +407,7 @@
                 const approveUrl = `https://wa.me/${phone}?text=${encodeURIComponent(approvalMsg)}`;
                 const rejectUrl  = `https://wa.me/${phone}?text=${encodeURIComponent(rejectionMsg)}`;
 
-                const text = `🔔 <b>הזמנה חדשה!</b>\n\n👤 ${data.firstName} ${data.lastName}\n📞 ${data.phone}\n✂️ ${data.service}\n📅 ${dateStr}\n🕐 ${data.time}${data.price ? `\n💰 ${data.price} ₪` : ''}${data.notes ? `\n📝 ${data.notes}` : ''}`;
+                const text = `🔔 <b>הזמנה חדשה!</b>\n\n👤 ${data.firstName} ${data.lastName}\n📞 ${data.phone}\n✂️ ${data.service}\n📅 ${dateStr}\n🕐 ${data.time}${data.price ? `\n💰 ${data.price} ₪` : ''}${data.notes ? `\n📝 ${data.notes}` : ''}\n\n🔗 <a href="https://maxim2901.github.io/shlomi_hali_barber-shop/admin.html">פתח ניהול הזמנות</a>`;
 
                 await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
                     method: 'POST',
