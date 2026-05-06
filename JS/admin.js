@@ -544,6 +544,9 @@ function initCalendar() {
         slotLabelFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
         eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
         expandRows: true,
+        views: {
+            dayGridMonth: { displayEventTime: false }, // מובייל: מציג רק שם (ללא שעה) — נותן מקום לשם
+        },
         events: (fetchInfo, successCallback) => {
             successCallback(
                 allBookings
