@@ -85,6 +85,8 @@
     .container { padding: 0 18px; }
     section { padding: 60px 0; }
 
+    .form-row { grid-template-columns: 1fr; }
+
     .nav-container { padding: 14px 18px; }
     .logo { font-size: 1.3rem; }
     .logo i { font-size: 1.1rem; }

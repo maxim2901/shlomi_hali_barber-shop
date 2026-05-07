@@ -530,13 +530,14 @@ function initCalendar() {
         return;
     }
     calendarInstance = new FullCalendar.Calendar(document.getElementById('calendarEl'), {
-        initialView: window.innerWidth <= 700 ? 'listMonth' : 'dayGridMonth',
+        initialView: 'timeGridDay',
         locale: 'he',
         direction: 'rtl',
         headerToolbar: window.innerWidth <= 700
-            ? { start: 'prev,next', center: 'title', end: 'listMonth,listWeek today' }
-            : { start: 'prev,next', center: 'title', end: 'dayGridMonth,timeGridWeek today' },
-        buttonText: { today: 'היום', month: 'חודש', week: 'שבוע', list: 'רשימה' },
+            ? { start: 'prev,next', center: 'title', end: 'timeGridDay,listMonth today' }
+            : { start: 'prev,next', center: 'title', end: 'timeGridDay,timeGridWeek,dayGridMonth today' },
+        buttonText: { today: 'היום', month: 'חודש', week: 'שבוע', day: 'יום', list: 'רשימה' },
+        buttonIcons: false,
         height: 'auto',
         allDaySlot: false,
         nowIndicator: true,
@@ -549,8 +550,25 @@ function initCalendar() {
         noEventsText: 'אין תורים בתקופה זו',
         views: {
             dayGridMonth: { displayEventTime: false },
-            listWeek:  { buttonText: 'שבוע' },
-            listMonth: { buttonText: 'חודש' },
+            listWeek:     { buttonText: 'שבוע' },
+            listMonth:    { buttonText: 'חודש' },
+            timeGridDay:  { buttonText: 'יום' },
+            timeGridWeek: { buttonText: 'שבוע' },
+        },
+        datesSet: (info) => {
+            const navText = {
+                timeGridDay:  { prev: 'יום קודם',  next: 'יום הבא'  },
+                timeGridWeek: { prev: 'שבוע קודם', next: 'שבוע הבא' },
+                dayGridMonth: { prev: 'חודש קודם', next: 'חודש הבא' },
+                listMonth:    { prev: 'חודש קודם', next: 'חודש הבא' },
+                listWeek:     { prev: 'שבוע קודם', next: 'שבוע הבא' },
+            };
+            const t = navText[info.view.type] || { prev: 'קודם', next: 'הבא' };
+            const calEl = document.getElementById('calendarEl');
+            const prevBtn = calEl.querySelector('.fc-prev-button');
+            const nextBtn = calEl.querySelector('.fc-next-button');
+            if (prevBtn) prevBtn.textContent = t.prev;
+            if (nextBtn) nextBtn.textContent = t.next;
         },
         events: (fetchInfo, successCallback) => {
             successCallback(

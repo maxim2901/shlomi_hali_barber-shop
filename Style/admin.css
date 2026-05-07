@@ -573,11 +573,13 @@
     color: var(--bg-primary) !important;
 }
 
-/* RTL arrow icon flip — prev shows right-chevron, next shows left-chevron */
-.fc-direction-rtl .fc-icon-chevron-left,
-.fc-direction-rtl .fc-icon-chevron-right {
-    display: inline-block;
-    transform: scaleX(-1);
+/* Nav text buttons — prevent wrapping and give slight visual separation */
+.fc-prev-button,
+.fc-next-button {
+    white-space: nowrap !important;
+    font-size: 0.8rem !important;
+    padding: 5px 13px !important;
+    letter-spacing: 0.01em !important;
 }
 
 /* Day grid */

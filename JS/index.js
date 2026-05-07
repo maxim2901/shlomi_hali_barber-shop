@@ -338,6 +338,9 @@ bookingForm.addEventListener('submit', async (e) => {
         return;
     }
 
+    const submitBtn = bookingForm.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+
     const data = new FormData(bookingForm);
     const service = data.get('service');
     const firstName = data.get('firstName').trim();
@@ -384,6 +387,7 @@ bookingForm.addEventListener('submit', async (e) => {
         // Refresh the dropdown so the just-taken slot disappears.
         dateInput.dispatchEvent(new Event('change'));
         timeSelect.focus();
+        submitBtn.disabled = false;
         return;
     }
 
