@@ -534,7 +534,7 @@ function initCalendar() {
         locale: 'he',
         direction: 'rtl',
         headerToolbar: window.innerWidth <= 700
-            ? { start: 'prev,next', center: 'title', end: 'timeGridDay,listMonth today' }
+            ? { start: 'prev,next', center: 'title', end: 'timeGridDay,timeGridWeek,listMonth today' }
             : { start: 'prev,next', center: 'title', end: 'timeGridDay,timeGridWeek,dayGridMonth today' },
         buttonText: { today: 'היום', month: 'חודש', week: 'שבוע', day: 'יום', list: 'רשימה' },
         buttonIcons: false,
@@ -551,7 +551,7 @@ function initCalendar() {
         views: {
             dayGridMonth: { displayEventTime: false },
             listWeek:     { buttonText: 'שבוע' },
-            listMonth:    { buttonText: 'חודש' },
+            listMonth:    { buttonText: 'כל התורים' },
             timeGridDay:  { buttonText: 'יום' },
             timeGridWeek: { buttonText: 'שבוע' },
         },

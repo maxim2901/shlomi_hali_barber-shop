@@ -640,8 +640,14 @@
 
 /* מובייל — כפתורים קומפקטיים */
 @media (max-width: 700px) {
+    .fc-toolbar { gap: 6px 10px; }
     .fc-toolbar-title { font-size: 1rem !important; }
-    .fc-button-primary { padding: 4px 10px !important; font-size: 0.78rem !important; }
+    .fc-button-primary { padding: 4px 9px !important; font-size: 0.75rem !important; }
+    .fc-prev-button,
+    .fc-next-button { font-size: 0.72rem !important; padding: 4px 8px !important; }
+    /* Allow view buttons to wrap to a second line on very small screens */
+    .fc-toolbar-chunk:last-child { flex-wrap: wrap !important; justify-content: flex-start !important; gap: 4px !important; }
+    .fc-button-group { flex-wrap: wrap !important; gap: 4px !important; }
 }
 
 /* ========== APPROVE / REJECT BUTTONS ========== */
